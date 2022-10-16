@@ -1,4 +1,8 @@
-# Create T3 App
+# Create T3 App - Receta 
+
+## Food API
+
+[Tasty API](https://rapidapi.com/apidojo/api/tasty)
 
 This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
 
