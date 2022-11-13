@@ -102,9 +102,9 @@ const Home: NextPage = () => {
           {foods.map((food, i) => (
             <div
               key={i}
-              className="flex flex-col gap-4 rounded bg-yellow-200 p-2"
+              className="flex flex-col gap-4 rounded bg-red-300 p-2"
             >
-              <img src={food.image} className="h-40 w-40 self-center" />
+              <img src={food.image} className="h-full w-full self-center rounded" />
               <p className="self-center">Name: {food.name}</p>
               <p>Description: {food.description}</p>
               <button
