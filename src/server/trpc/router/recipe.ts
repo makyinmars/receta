@@ -14,47 +14,47 @@ export const recipeRouter = router({
             country: dessert.country,
             cookTimeMinutes: dessert.cookTimeMinutes,
             description: dessert.description,
-            // instructions: {
-            //   createMany: {
-            //     data: dessert.instructions.map((instruction) => ({
-            //       startTime: instruction.startTime,
-            //       appliance: instruction.appliance,
-            //       endTime: instruction.endTime,
-            //       temperature: instruction.temperature,
-            //       displayText: instruction.displayText,
-            //       position: instruction.position,
-            //     })),
-            //   },
-            // },
-            // tags: {
-            //   createMany: {
-            //     data: dessert.tags.map((tag) => ({
-            //       name: tag.name,
-            //       type: tag.type,
-            //       displayName: tag.displayName,
-            //     })),
-            //   },
-            // },
-            // topics: {
-            //   createMany: {
-            //     data: dessert.topics.map((topic) => ({
-            //       name: topic.name,
-            //       slug: topic.slug,
-            //     })),
-            //   },
-            // },
+            instructions: {
+              createMany: {
+                data: dessert.instructions.map((instruction) => ({
+                  startTime: instruction.startTime,
+                  appliance: instruction.appliance,
+                  endTime: instruction.endTime,
+                  temperature: instruction.temperature,
+                  displayText: instruction.displayText,
+                  position: instruction.position,
+                })),
+              },
+            },
+            tags: {
+              createMany: {
+                data: dessert.tags.map((tag) => ({
+                  name: tag.name,
+                  type: tag.type,
+                  displayName: tag.displayName,
+                })),
+              },
+            },
+            topics: {
+              createMany: {
+                data: dessert.topics.map((topic) => ({
+                  name: topic.name,
+                  slug: topic.slug,
+                })),
+              },
+            },
             originalVideoUrl: dessert.originalVideoUrl,
             prepTimeMinutes: dessert.prepTimeMinutes,
             thumbnailUrl: dessert.thumbnailUrl,
-            // userRatings: {
-            //   createMany: {
-            //     data: dessert.userRatings.map((userRating) => ({
-            //       countNegative: userRating.countNegative,
-            //       countPositive: userRating.countPositive,
-            //       score: userRating.score,
-            //     })),
-            //   },
-            // },
+            userRatings: {
+              createMany: {
+                data: dessert.userRatings.map((userRating) => ({
+                  countNegative: userRating.countNegative,
+                  countPositive: userRating.countPositive,
+                  score: userRating.score,
+                })),
+              },
+            },
           },
         });
 
@@ -70,99 +70,113 @@ export const recipeRouter = router({
     });
   }),
 
-  addInstructions: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input: { id } }) => {
-      // Create a Promise All to wait for all the recipes to be created
-      const promise = new Promise((resolve, reject) => {
-        desserts.map(async (dessert) => {
-          const recipe = (await ctx.prisma.recipe.findUnique({
-            where: {
-              id,
+  addInstructions: publicProcedure.mutation(async ({ ctx }) => {
+    // Get all the recipes with the ids
+    const recipes = await ctx.prisma.recipe.findMany({});
+
+    // Create a Promise All to wait for all the recipes to be created
+    const promise = new Promise((resolve, reject) => {
+      desserts.map(async (dessert, i) => {
+        const recipe = (await ctx.prisma.recipe.findUnique({
+          where: {
+            id: recipes[i]?.id,
+          },
+        })) as Recipe;
+
+        // dessert.instructions.map(async (instruction) => {
+        //   const ingredientCreated = await ctx.prisma.instruction.create({
+        //     data: {
+        //       startTime: instruction.startTime,
+        //       appliance: instruction.appliance,
+        //       endTime: instruction.endTime,
+        //       temperature: instruction.temperature,
+        //       position: instruction.position,
+        //       displayText: instruction.displayText,
+        //       recipe: {
+        //         connect: {
+        //           id: recipe.id,
+        //         },
+        //       },
+        //     },
+        //   });
+
+        //   return ingredientCreated;
+        // });
+
+        // dessert.tags.map(async (tag) => {
+        //   const tagCreated = await ctx.prisma.tag.create({
+        //     data: {
+        //       type: tag.type,
+        //       name: tag.name,
+        //       displayName: tag.displayName,
+        //       recipe: {
+        //         connect: {
+        //           id: recipe.id,
+        //         },
+        //       },
+        //     },
+        //   });
+
+        //   return tagCreated;
+        // });
+
+        // dessert.topics.map(async (topic) => {
+        //   const topicCreated = await ctx.prisma.topic.create({
+        //     data: {
+        //       name: topic.name,
+        //       slug: topic.slug,
+        //       recipe: {
+        //         connect: {
+        //           id: recipe.id,
+        //         },
+        //       },
+        //     },
+        //   });
+
+        //   return topicCreated;
+        // });
+
+        // dessert.tags.map(async (tag) => {
+        //   const tagCreated = await ctx.prisma.tag.create({
+        //     data: {
+        //       type: tag.type,
+        //       name: tag.name,
+        //       displayName: tag.displayName,
+        //       recipe: {
+        //         connect: {
+        //           id: recipe.id,
+        //         },
+        //       },
+        //     },
+        //   });
+
+        //   return tagCreated;
+        // });
+
+        dessert.userRatings.map(async (userRating) => {
+          const userRatingCreated = await ctx.prisma.userRating.create({
+            data: {
+              countNegative: userRating.countNegative,
+              countPositive: userRating.countPositive,
+              score: userRating.score,
+              recipe: {
+                connect: {
+                  id: recipe.id,
+                },
+              },
             },
-          })) as Recipe;
-
-          dessert.instructions.map(async (instruction) => {
-            const ingredientCreated = await ctx.prisma.instruction.create({
-              data: {
-                startTime: instruction.startTime,
-                appliance: instruction.appliance,
-                endTime: instruction.endTime,
-                temperature: instruction.temperature,
-                position: instruction.position,
-                displayText: instruction.displayText,
-                recipe: {
-                  connect: {
-                    id: recipe.id,
-                  },
-                },
-              },
-            });
-
-            return ingredientCreated;
           });
 
-          dessert.tags.map(async (tag) => {
-            const tagCreated = await ctx.prisma.tag.create({
-              data: {
-                type: tag.type,
-                name: tag.name,
-                displayName: tag.displayName,
-                recipe: {
-                  connect: {
-                    id: recipe.id,
-                  },
-                },
-              },
-            });
-
-            return tagCreated;
-          });
-
-          dessert.topics.map(async (topic) => {
-            const topicCreated = await ctx.prisma.topic.create({
-              data: {
-                name: topic.name,
-                slug: topic.slug,
-                recipe: {
-                  connect: {
-                    id: recipe.id,
-                  },
-                },
-              },
-            });
-
-            return topicCreated;
-          });
-
-          dessert.tags.map(async (tag) => {
-            const tagCreated = await ctx.prisma.tag.create({
-              data: {
-                type: tag.type,
-                name: tag.name,
-                displayName: tag.displayName,
-                recipe: {
-                  connect: {
-                    id: recipe.id,
-                  },
-                },
-              },
-            });
-
-            return tagCreated;
-          });
+          return userRatingCreated;
         });
-
-        resolve("Ingredients created");
       });
 
-      await Promise.all([promise]).then((values) => {
-        console.log("Promise All", values);
-        return values;
-      });
-    }),
+      resolve("Ingredients created");
+    });
+
+    await Promise.all([promise]).then((values) => {
+      console.log("Promise All", values);
+      return values;
+    });
+  }),
 });

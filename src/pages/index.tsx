@@ -9,10 +9,19 @@ const Home: NextPage = () => {
 
   const createRecipes = trpc.recipe.createRecipes.useMutation();
 
+  const addInstructions = trpc.recipe.addInstructions.useMutation();
+
   const onCreateRecipes = async () => {
     try {
       const recipes = await createRecipes.mutateAsync();
       console.log("recipes", recipes);
+    } catch {}
+  };
+
+  const onAddInstructions = async () => {
+    try {
+      const instructions = await addInstructions.mutateAsync();
+      console.log("instructions", instructions);
     } catch {}
   };
 
@@ -109,6 +118,7 @@ const Home: NextPage = () => {
       <main className="container mx-auto flex flex-col items-center justify-center gap-4 p-4">
         <h1 className="text-4xl font-bold">Receta</h1>
         <button onClick={() => onCreateRecipes()}>Create Recipes</button>
+        <button onClick={() => onAddInstructions()}>Create Instructions</button>
         <p className="text-lg text-stone-700">
           Food is a topic of universal interest irrespective of cultures,
           countries, and generations. The advent of the internet has only
