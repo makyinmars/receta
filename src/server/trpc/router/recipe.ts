@@ -1,6 +1,6 @@
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { desserts } from "@/data/dessert";
+import { vegetables as desserts } from "@/data/vegetables";
 import { Recipe } from "@prisma/client";
 
 export const recipeRouter = router({
