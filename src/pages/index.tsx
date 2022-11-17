@@ -96,15 +96,6 @@ const Home: NextPage = () => {
     },
   ];
 
-  const getApiCall = async () => {
-    const response = await fetch("/api/recipes/", {
-      method: "GET",
-    });
-    const data = await response.json();
-    // Download the file using browser download
-    window.open(data.url);
-  };
-
   return (
     <>
       <Head>
@@ -117,8 +108,6 @@ const Home: NextPage = () => {
       </Head>
       <main className="container mx-auto flex flex-col items-center justify-center gap-4 p-4">
         <h1 className="text-4xl font-bold">Receta</h1>
-        <button onClick={() => onCreateRecipes()}>Create Recipes</button>
-        <button onClick={() => onAddInstructions()}>Create Instructions</button>
         <p className="text-lg text-stone-700">
           Food is a topic of universal interest irrespective of cultures,
           countries, and generations. The advent of the internet has only
