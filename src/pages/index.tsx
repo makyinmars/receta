@@ -7,6 +7,15 @@ import { trpc } from "../utils/trpc";
 const Home: NextPage = () => {
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
 
+  const createRecipes = trpc.recipe.createRecipes.useMutation();
+
+  const onCreateRecipes = async () => {
+    try {
+      const recipes = await createRecipes.mutateAsync();
+      console.log("recipes", recipes);
+    } catch {}
+  };
+
   const router = useRouter();
 
   const foods = [
@@ -78,6 +87,15 @@ const Home: NextPage = () => {
     },
   ];
 
+  const getApiCall = async () => {
+    const response = await fetch("/api/recipes/", {
+      method: "GET",
+    });
+    const data = await response.json();
+    // Download the file using browser download
+    window.open(data.url);
+  };
+
   return (
     <>
       <Head>
@@ -90,6 +108,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="container mx-auto flex flex-col items-center justify-center gap-4 p-4">
         <h1 className="text-4xl font-bold">Receta</h1>
+        <button onClick={() => onCreateRecipes()}>Create Recipes</button>
         <p className="text-lg text-stone-700">
           Food is a topic of universal interest irrespective of cultures,
           countries, and generations. The advent of the internet has only
@@ -97,18 +116,18 @@ const Home: NextPage = () => {
           recipes, ingredients, food photos, and other food-related information
           online
         </p>
-        <input type="text" placeholder="Search food" />
+        <input type="text" placeholder="Search food" className="rounded p-1" />
         <div className="grid grid-cols-4 gap-4">
           {foods.map((food, i) => (
-            <div
-              key={i}
-              className="flex flex-col gap-4 rounded bg-red-300 p-2"
-            >
-              <img src={food.image} className="h-full w-full self-center rounded" />
+            <div key={i} className="flex flex-col gap-4 rounded bg-red-300 p-2">
+              <img
+                src={food.image}
+                className="h-full w-full self-center rounded"
+              />
               <p className="self-center">Name: {food.name}</p>
               <p>Description: {food.description}</p>
               <button
-                className="rounded bg-yellow-600 p-2 hover:bg-yellow-500"
+                className="rounded bg-violet-300 p-2 hover:bg-violet-400"
                 onClick={() => router.push("/food")}
               >
                 Take me there

@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Recipe } from "types";
 
@@ -9,6 +9,26 @@ interface RecipeInput {
 
 const Search = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+  // const extraRecipesInfo = (recipes: Recipe[]) => {
+  //   const recipesInfo = recipes.map((recipe) => {
+  //     return {
+  //       cookTimeMinutes: recipe.cook_time_minutes,
+  //       country: recipe.country,
+  //       description: recipe.description,
+  //       id: recipe.id,
+  //       instructions: recipe.instructions,
+  //       name: recipe.name,
+  //       originalVideoUrl: recipe.original_video_url,
+  //       prepTimeMinutes: recipe.prep_time_minutes,
+  //       tags: recipe.tags,
+  //       thumbnailUrl: recipe.thumbnail_url,
+  //       topics: recipe.topics,
+  //       userRatings: recipe.user_ratings,
+  //     };
+  //   });
+  //   return recipesInfo;
+  // };
 
   const {
     register,
@@ -23,6 +43,20 @@ const Search = () => {
     const recipeData = await res.json();
     setRecipes(recipeData.results);
   };
+
+  // useEffect(() => {
+  //   if (recipes.length > 0) {
+  //     const recipesInfo = extraRecipesInfo(recipes);
+  //     const blob = new Blob([JSON.stringify(recipesInfo)], {
+  //       type: "application/json",
+  //     });
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `dessert.json`;
+  //     link.click();
+  //   }
+  // }, [recipes]);
 
   return (
     <div className="container mx-auto flex flex-col gap-4 p-4">

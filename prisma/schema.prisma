@@ -49,7 +49,6 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  recipes       Recipe[]
 }
 
 model VerificationToken {
@@ -61,7 +60,54 @@ model VerificationToken {
 }
 
 model Recipe {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  id               String        @id @default(cuid())
+  name             String
+  country          String
+  cookTimeMinutes  Int           @default(10)
+  description      String        @default("")
+  instructions     Instruction[]
+  originalVideoUrl String
+  prepTimeMinutes  Int           @default(10)
+  tags             Tag[]
+  thumbnailUrl     String
+  topics           Topic[]
+  userRatings      UserRating[]
+}
+
+model Instruction {
+  id          String  @id @default(cuid())
+  startTime   Int     @default(0)
+  appliance   String  @default("")
+  endTime     Int     @default(0)
+  temperature Int     @default(0)
+  displayText String
+  position    Int
+  recipe      Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId    String?
+}
+
+model Tag {
+  id          String  @id @default(cuid())
+  type        String  @default("")
+  name        String  @default("")
+  displayName String  @default("")
+  recipe      Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId    String?
+}
+
+model Topic {
+  id       String  @id @default(cuid())
+  slug     String
+  name     String
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model UserRating {
+  id            String  @id @default(cuid())
+  countPositive Int
+  countNegative Int
+  score         Float
+  Recipe        Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId      String?
 }
