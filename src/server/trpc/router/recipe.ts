@@ -10,6 +10,8 @@ export const recipeRouter = router({
       desserts.map(async (dessert) => {
         const recipe = await ctx.prisma.recipe.create({
           data: {
+            createdAt: new Date(),
+            updatedAt: new Date(),
             name: dessert.name,
             country: dessert.country,
             cookTimeMinutes: dessert.cookTimeMinutes,
@@ -178,5 +180,21 @@ export const recipeRouter = router({
       console.log("Promise All", values);
       return values;
     });
+  }),
+
+  getLastTwoRecipes: publicProcedure.query(({ ctx }) => {
+    const recipes = ctx.prisma.recipe.findMany({
+      take: 2,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        thumbnailUrl: true,
+      },
+    });
+    return recipes;
   }),
 });

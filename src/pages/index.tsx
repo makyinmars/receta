@@ -1,100 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { trpc } from "../utils/trpc";
+
+import { trpc } from "src/utils/trpc";
 
 const Home: NextPage = () => {
-  const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-
-  const createRecipes = trpc.recipe.createRecipes.useMutation();
-
-  const addInstructions = trpc.recipe.addInstructions.useMutation();
-
-  const onCreateRecipes = async () => {
-    try {
-      const recipes = await createRecipes.mutateAsync();
-      console.log("recipes", recipes);
-    } catch {}
-  };
-
-  const onAddInstructions = async () => {
-    try {
-      const instructions = await addInstructions.mutateAsync();
-      console.log("instructions", instructions);
-    } catch {}
-  };
-
-  const router = useRouter();
-
-  const foods = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
-      name: "Food",
-      description: "Description food",
-    },
-  ];
+  const { data, isLoading, isError } = trpc.recipe.getLastTwoRecipes.useQuery();
 
   return (
     <>
@@ -106,33 +16,38 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container mx-auto flex flex-col items-center justify-center gap-4 p-4">
-        <h1 className="text-4xl font-bold">Receta</h1>
-        <p className="text-lg text-stone-700">
-          Food is a topic of universal interest irrespective of cultures,
-          countries, and generations. The advent of the internet has only
-          increased this interest, for users are constantly looking out for new
-          recipes, ingredients, food photos, and other food-related information
-          online
-        </p>
-        <input type="text" placeholder="Search food" className="rounded p-1" />
-        <div className="grid grid-cols-4 gap-4">
-          {foods.map((food, i) => (
-            <div key={i} className="flex flex-col gap-4 rounded bg-red-300 p-2">
-              <img
-                src={food.image}
-                className="h-full w-full self-center rounded"
-              />
-              <p className="self-center">Name: {food.name}</p>
-              <p>Description: {food.description}</p>
-              <button
-                className="rounded bg-violet-300 p-2 hover:bg-violet-400"
-                onClick={() => router.push("/food")}
-              >
-                Take me there
-              </button>
-            </div>
-          ))}
+      <main className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="self-center text-3xl font-bold">Receta is Here!</h2>
+          <p className="text-lg text-stone-700">
+            Food is a topic of universal interest irrespective of cultures,
+            countries, and generations. The advent of the internet has only
+            increased this interest, for users are constantly looking out for
+            new recipes, ingredients, food photos, and other food-related
+            information online
+          </p>
+          <div className="flex justify-center">
+            <button className="rounded border border-gray-400 bg-gray-100 p-2 shadow-md">
+              View All Recipes
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <h2 className="col-span-2 text-center text-3xl font-bold">
+            Latest Recipes
+          </h2>
+          {data &&
+            data.map((recipe, i) => (
+              <div key={i} className="flex flex-col gap-4">
+                <img
+                  src={recipe.thumbnailUrl}
+                  alt={recipe.name}
+                  className="rounded"
+                />
+                <h2 className="text-lg font-bold">{recipe.name}</h2>
+                <p className="text-lg text-stone-700">{recipe.description}</p>
+              </div>
+            ))}
         </div>
       </main>
     </>
