@@ -184,7 +184,7 @@ export const recipeRouter = router({
 
   getLastTwoRecipes: publicProcedure.query(({ ctx }) => {
     const recipes = ctx.prisma.recipe.findMany({
-      take: 2,
+      take: 4,
       orderBy: {
         createdAt: "desc",
       },

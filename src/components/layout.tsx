@@ -9,12 +9,16 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="flex flex-col gap-4">
       <nav className="flex justify-around p-2">
         <Link href="/">
-          <div>Home</div>
+          <p className="custom-nav">Home</p>
         </Link>
-        <div>Recipes</div>
-        <div>Sign In</div>
+        <Link href="/recipes">
+          <p className="custom-nav">Recipes</p>
+        </Link>
+        <Link href="/">
+          <p className="custom-nav">Sign In</p>
+        </Link>
       </nav>
-      <main className="container mx-auto p-4">{children}</main>
+      <main className="container mx-auto px-4">{children}</main>
     </div>
   );
 };
