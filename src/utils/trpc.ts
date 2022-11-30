@@ -46,33 +46,4 @@ export const trpc = createTRPCNext<AppRouter>({
     };
   },
   ssr: true,
-  /**
-   * Set headers or status code when doing SSR
-   */
-  responseMeta(opts) {
-    const ctx = opts.ctx as SSRContext;
-
-    if (ctx.status) {
-      // If HTTP status set, propagate that
-      return {
-        status: ctx.status,
-      };
-    }
-
-    const error = opts.clientErrors[0];
-    if (error) {
-      // Propagate http first error from API calls
-      return {
-        status: error.data?.httpStatus ?? 500,
-      };
-    }
-
-    // for app caching with SSR see https://trpc.io/docs/caching
-    const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
-    return {
-      headers: {
-        "cache-control": `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
-      },
-    };
-  },
 });
