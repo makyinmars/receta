@@ -19,7 +19,7 @@ const Recipe = ({ data }: RecipeProps) => {
       {data &&
         data.map((recipe, i) => (
           <div
-            key={recipe.id}
+            key={i}
             className="custom-border group flex h-80 flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
           >
             <div className="flex flex-1">
