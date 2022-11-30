@@ -46,6 +46,11 @@ const Recipes = () => {
       {isLoading && <Spinner text="Loading Recipes" />}
       {isError && <Error />}
       {recipesData && <Recipe data={recipesData} />}
+      {recipesData && recipesData.length === 0 && (
+        <h2 className="text-center text-xl font-bold text-red-500">
+          We could not find a recipe, try a new one.
+        </h2>
+      )}
     </div>
   );
 };
