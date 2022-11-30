@@ -1,8 +1,10 @@
-import Spinner from "@/components/spinner";
 import type { NextPage } from "next";
 import Head from "next/head";
 
 import { trpc } from "src/utils/trpc";
+import Error from "src/components/error";
+import Recipe from "src/components/recipe";
+import Spinner from "src/components/spinner";
 
 const Home: NextPage = () => {
   const { data, isLoading, isError } = trpc.recipe.getLastTwoRecipes.useQuery();
@@ -33,33 +35,33 @@ const Home: NextPage = () => {
         </div>
         <h2 className="text-center text-3xl font-bold">Latest Recipes</h2>
         {isLoading && <Spinner text="Latest Recipes Loading" />}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {data &&
-            data.map((recipe, i) => (
-              <div
-                key={i}
-                className="custom-border group flex h-80 flex-col items-center justify-between gap-4 rounded p-4 md:h-auto"
-              >
-                <p className="hidden text-lg font-semibold text-stone-700 group-hover:flex">
-                  {recipe.description}
-                </p>
-                <img
-                  src={recipe.thumbnailUrl}
-                  alt={recipe.name}
-                  className="h-40 w-40 self-center rounded group-hover:hidden md:h-80 md:w-80"
-                />
-                <div>
-                  <h2 className="text-lg font-bold">{recipe.name}</h2>
-                  <div className="flex justify-center">
-                    <button className="custom-button">View Recipe</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
+        {isError && <Error />}
+        {data && <Recipe data={data} />}
         <h2 className="text-center text-3xl font-bold">
           Bookmark Your Favorite Recipes
         </h2>
+        <div className="grid grid-cols-1 place-items-center content-center gap-4 md:grid-cols-2">
+          <div>
+            <p className="text-center text-lg font-semibold">
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Culpa
+              quis perferendis libero doloremque ratione! Cupiditate laborum
+              quibusdam aliquid quam non, adipisci blanditiis nihil, delectus,
+              porro repellat nostrum suscipit temporibus nobis! Lorem, ipsum
+              dolor sit amet consectetur adipisicing elit. Culpa quis
+              perferendis libero doloremque ratione! Cupiditate laborum
+              quibusdam aliquid quam non, adipisci blanditiis nihil, delectus,
+              porro repellat nostrum suscipit temporibus nobis!
+            </p>
+          </div>
+          <div>
+            <img
+              src="https://media2.giphy.com/media/l0MYyKbTCresSjrhK/giphy.gif?cid=ecf05e47m2f6n4ygqzk1odmxpej6lhnv5r6soz3o8onlr5fq&rid=giphy.gif&ct=g"
+              width="480"
+              height="270"
+              className="rounded"
+            />
+          </div>
+        </div>
       </main>
     </>
   );

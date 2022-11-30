@@ -197,4 +197,19 @@ export const recipeRouter = router({
     });
     return recipes;
   }),
+
+  getAllRecipes: publicProcedure.query(({ ctx }) => {
+    const recipes = ctx.prisma.recipe.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        thumbnailUrl: true,
+      },
+    });
+    return recipes;
+  }),
 });

@@ -6,8 +6,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="flex flex-col gap-4">
-      <nav className="flex justify-around p-2">
+    <div className="flex flex-col gap-4 py-4">
+      <nav className="flex justify-around">
         <Link href="/">
           <p className="custom-nav">Home</p>
         </Link>

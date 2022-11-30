@@ -10,11 +10,11 @@
 
 @layer components {
   .custom-border {
-    @apply border border-gray-400 shadow-md;
+    @apply border-2 border-gray-400 shadow-md;
   }
 
   .custom-button {
-    @apply rounded border border-gray-400 bg-gray-100 p-2 font-semibold text-stone-700 shadow-md hover:bg-gray-200;
+    @apply rounded border-2 border-gray-400 bg-gray-100 p-2 font-semibold text-stone-700 shadow-md hover:bg-gray-200;
   }
 
   .custom-nav {
