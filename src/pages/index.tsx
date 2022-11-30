@@ -1,13 +1,17 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { trpc } from "src/utils/trpc";
 import Error from "src/components/error";
 import Recipe from "src/components/recipe";
 import Spinner from "src/components/spinner";
+import { ssrInit } from "src/utils/ssg";
 
 const Home: NextPage = () => {
-  const { data, isLoading, isError } = trpc.recipe.getLastTwoRecipes.useQuery();
+  const router = useRouter();
+  const { data, isLoading, isError } =
+    trpc.recipe.getLastFourRecipes.useQuery();
 
   return (
     <>
@@ -30,7 +34,12 @@ const Home: NextPage = () => {
             information online
           </p>
           <div className="flex justify-center">
-            <button className="custom-button">View All Recipes</button>
+            <button
+              className="custom-button"
+              onClick={() => router.push("/recipes")}
+            >
+              View All Recipes
+            </button>
           </div>
         </div>
         <h2 className="text-center text-3xl font-bold">Latest Recipes</h2>
@@ -68,3 +77,17 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { ssg } = await ssrInit(context);
+
+  await ssg.recipe.getLastFourRecipes.prefetch();
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  };
+};

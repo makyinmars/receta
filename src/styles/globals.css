@@ -20,4 +20,12 @@
   .custom-nav {
     @apply bg-gradient-to-r from-rose-700 to-stone-600 bg-clip-text text-2xl font-bold text-transparent hover:from-violet-900 hover:to-stone-700;
   }
+
+  .custom-subtitle {
+    @apply text-2xl font-bold;
+  }
+
+  .custom-par {
+    @apply text-lg;
+  }
 }

@@ -1,7 +1,8 @@
-import { router, publicProcedure, protectedProcedure } from "../trpc";
-import { z } from "zod";
-import { vegetables as desserts } from "@/data/vegetables";
 import { Recipe } from "@prisma/client";
+import { z } from "zod";
+
+import { spicy as desserts } from "src/data/spicy";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const recipeRouter = router({
   createRecipes: publicProcedure.mutation(async ({ ctx }) => {
@@ -182,7 +183,7 @@ export const recipeRouter = router({
     });
   }),
 
-  getLastTwoRecipes: publicProcedure.query(({ ctx }) => {
+  getLastFourRecipes: publicProcedure.query(({ ctx }) => {
     const recipes = ctx.prisma.recipe.findMany({
       take: 4,
       orderBy: {
@@ -212,4 +213,25 @@ export const recipeRouter = router({
     });
     return recipes;
   }),
+
+  getRecipeById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(({ ctx, input: { id } }) => {
+      const recipe = ctx.prisma.recipe.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          instructions: true,
+          tags: true,
+          topics: true,
+          userRatings: true,
+        },
+      });
+      return recipe;
+    }),
 });
