@@ -18,7 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
           <p className="custom-nav">Sign In</p>
         </Link>
       </nav>
-      <main className="container mx-auto px-4">{children}</main>
+      <main className="container mx-auto p-4">{children}</main>
     </div>
   );
 };
