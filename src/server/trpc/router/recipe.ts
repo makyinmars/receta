@@ -5,7 +5,7 @@ import { spicy as desserts } from "src/data/spicy";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const recipeRouter = router({
-  createRecipes: publicProcedure.mutation(async ({ ctx }) => {
+  createRecipes: protectedProcedure.mutation(async ({ ctx }) => {
     // Create a Promise All to wait for all the recipes to be created
     const promise = new Promise((resolve, reject) => {
       desserts.map(async (dessert) => {
@@ -73,7 +73,7 @@ export const recipeRouter = router({
     });
   }),
 
-  addInstructions: publicProcedure.mutation(async ({ ctx }) => {
+  addInstructions: protectedProcedure.mutation(async ({ ctx }) => {
     // Get all the recipes with the ids
     const recipes = await ctx.prisma.recipe.findMany({});
 

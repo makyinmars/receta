@@ -36,6 +36,10 @@ export const getServerSideProps = async (
         trpcState: ssg.dehydrate(),
         email: null,
       },
+      redirect: {
+        destinatin: "/",
+        permanent: false,
+      },
     };
   }
 };

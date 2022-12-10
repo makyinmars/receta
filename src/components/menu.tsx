@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { BsBookmarksFill } from "react-icons/bs";
 import { FaUserCircle } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
+import { IoFastFoodOutline } from "react-icons/io5";
 import { signOut } from "next-auth/react";
 
 import { User } from "@prisma/client";
@@ -19,6 +20,11 @@ const Menu = ({ children, user }: MenuProps) => {
       label: "Bookmarks",
       href: "/bookmarks",
       icon: <BsBookmarksFill className="icon-menu" />,
+    },
+    {
+      label: "Recipes",
+      href: "/recipes",
+      icon: <IoFastFoodOutline className="icon-menu" />,
     },
     {
       label: "User",

@@ -1,21 +1,40 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import { BsFillBookmarksFill, BsBookmarks } from "react-icons/bs";
 
 import { ssrInit } from "src/utils/ssg";
 import { trpc } from "src/utils/trpc";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
-import Menu from "@/components/menu";
+import Menu from "src/components/menu";
 
 const RecipeId = ({
   id,
   email,
+  userId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const utils = trpc.useContext();
+
   const { data: userData } = trpc.user.getUserByEmail.useQuery({
     email,
   });
+
   const { data, isLoading, isError } = trpc.recipe.getRecipeById.useQuery({
     id,
+  });
+
+  const createBookmark = trpc.bookmark.createBookmark.useMutation({
+    onSuccess: async () => {
+      await utils.user.getUserByEmail.invalidate({ email });
+      await utils.bookmark.getBookmarks.invalidate({ userId });
+    },
+  });
+
+  const removeBookmark = trpc.bookmark.deleteBookmark.useMutation({
+    onSuccess: async () => {
+      await utils.user.getUserByEmail.invalidate({ email });
+      await utils.bookmark.getBookmarks.invalidate({ userId });
+    },
   });
 
   return (
@@ -28,7 +47,41 @@ const RecipeId = ({
             <title>{data.name}</title>
           </Head>
           <h1 className="text-center text-3xl font-bold">{data.name}</h1>
-          <h2 className="custom-subtitle">Description</h2>
+          <div className="flex gap-4">
+            <h2 className="custom-subtitle">Description</h2>
+            {userData && (
+              <>
+                {userData.bookmarks.find((bookmark) => {
+                  bookmark.recipeId === id;
+                }) ? (
+                  <BsBookmarks
+                    className="h-8 w-8 hover:cursor-pointer"
+                    title="Remove this Bookmark"
+                    onClick={async () => {
+                      try {
+                        await removeBookmark.mutateAsync({
+                          recipeId: id,
+                        });
+                      } catch {}
+                    }}
+                  />
+                ) : (
+                  <BsFillBookmarksFill
+                    className="h-8 w-8 hover:cursor-pointer"
+                    title="Bookmark this Recipe"
+                    onClick={async () => {
+                      try {
+                        await createBookmark.mutateAsync({
+                          recipeId: id,
+                          userId: userData.id,
+                        });
+                      } catch {}
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </div>
           <hr className="border border-stone-700" />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-4">
@@ -108,19 +161,23 @@ export const getServerSideProps = async (
   await ssg.recipe.getRecipeById.prefetch({ id });
 
   if (email) {
-    await ssg.user.getUserByEmail.prefetch({ email });
-    return {
-      props: {
-        trpcState: ssg.dehydrate(),
-        email,
-        id,
-      },
-    };
+    const user = await ssg.user.getUserByEmail.fetch({ email });
+    if (user) {
+      return {
+        props: {
+          trpcState: ssg.dehydrate(),
+          email,
+          id,
+          userId: user.id,
+        },
+      };
+    }
   } else {
     return {
       props: {
         trpcState: ssg.dehydrate(),
         email: null,
+        userId: null,
         id,
       },
     };

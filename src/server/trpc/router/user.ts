@@ -16,6 +16,13 @@ export const userRouter = router({
           where: {
             email,
           },
+          include: {
+            bookmarks: {
+              select: {
+                recipeId: true,
+              },
+            },
+          },
         });
       } else {
         throw new TRPCError({
@@ -23,5 +30,18 @@ export const userRouter = router({
           message: "You are not authorized to access this resource",
         });
       }
+    }),
+  deleteUser: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(({ ctx, input: { id } }) => {
+      return ctx.prisma.user.delete({
+        where: {
+          id,
+        },
+      });
     }),
 });

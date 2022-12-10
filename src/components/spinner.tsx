@@ -11,7 +11,7 @@ const Spinner = ({ text }: SpinnerProps) => {
         className="flex items-center space-x-2"
       >
         <svg
-          className="h-6 w-6 animate-spin stroke-stone-700"
+          className="h-12 w-12 animate-spin stroke-stone-700"
           viewBox="0 0 256 256"
         >
           <line
