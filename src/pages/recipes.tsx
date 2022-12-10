@@ -1,14 +1,18 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 
 import { trpc } from "src/utils/trpc";
 import { ssrInit } from "src/utils/ssg";
+import Menu from "src/components/menu";
 import Spinner from "src/components/spinner";
 import Recipe from "src/components/recipe";
 import Error from "src/components/error";
 
-const Recipes = () => {
+const Recipes = ({
+  email,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: userData } = trpc.user.getUserByEmail.useQuery({ email });
   const { data, isLoading, isError } = trpc.recipe.getAllRecipes.useQuery();
   const [search, setSearch] = useState("");
   const [recipesData, setRecipesData] = useState(data);
@@ -29,29 +33,31 @@ const Recipes = () => {
   }, [findRecipesCallback]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <Head>
-        <title>Recipes</title>
-      </Head>
-      <h1 className="text-center text-3xl font-bold">Recipes</h1>
-      <div className="flex justify-center gap-2 pb-4">
-        <input
-          type="text"
-          className="custom-border rounded bg-white bg-opacity-40 p-2"
-          placeholder="Type to find a recipe"
-          onChange={(e) => setSearch(e.target.value)}
-          value={search}
-        />
+    <Menu user={userData}>
+      <div className="flex flex-col gap-4">
+        <Head>
+          <title>Recipes</title>
+        </Head>
+        <h1 className="text-center text-3xl font-bold">Recipes</h1>
+        <div className="flex justify-center gap-2 pb-4">
+          <input
+            type="text"
+            className="custom-border rounded bg-white bg-opacity-40 p-2 outline-none"
+            placeholder="Type to find a recipe"
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
+          />
+        </div>
+        {isLoading && <Spinner text="Loading Recipes" />}
+        {isError && <Error />}
+        {recipesData && <Recipe data={recipesData} />}
+        {recipesData && recipesData.length === 0 && (
+          <h2 className="text-center text-xl font-bold text-red-500">
+            We could not find a recipe, try a new one.
+          </h2>
+        )}
       </div>
-      {isLoading && <Spinner text="Loading Recipes" />}
-      {isError && <Error />}
-      {recipesData && <Recipe data={recipesData} />}
-      {recipesData && recipesData.length === 0 && (
-        <h2 className="text-center text-xl font-bold text-red-500">
-          We could not find a recipe, try a new one.
-        </h2>
-      )}
-    </div>
+    </Menu>
   );
 };
 
@@ -60,13 +66,26 @@ export default Recipes;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const { ssg } = await ssrInit(context);
+  const { ssg, session } = await ssrInit(context);
+
+  const email = session?.user?.email as string;
 
   await ssg.recipe.getAllRecipes.prefetch();
 
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
-  };
+  if (email) {
+    await ssg.user.getUserByEmail.prefetch({ email });
+    return {
+      props: {
+        trpcState: ssg.dehydrate(),
+        email,
+      },
+    };
+  } else {
+    return {
+      props: {
+        trpcState: ssg.dehydrate(),
+        email: null,
+      },
+    };
+  }
 };

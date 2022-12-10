@@ -5,16 +5,21 @@ import { ssrInit } from "src/utils/ssg";
 import { trpc } from "src/utils/trpc";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
+import Menu from "@/components/menu";
 
 const RecipeId = ({
   id,
+  email,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: userData } = trpc.user.getUserByEmail.useQuery({
+    email,
+  });
   const { data, isLoading, isError } = trpc.recipe.getRecipeById.useQuery({
     id,
   });
 
   return (
-    <div>
+    <Menu user={userData}>
       {isLoading && <Spinner text="Recipe Loading" />}
       {isError && <Error />}
       {data && (
@@ -86,7 +91,7 @@ const RecipeId = ({
           ))}
         </div>
       )}
-    </div>
+    </Menu>
   );
 };
 
@@ -95,16 +100,29 @@ export default RecipeId;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>
 ) => {
-  const { ssg } = await ssrInit(context);
+  const { ssg, session } = await ssrInit(context);
 
+  const email = session?.user?.email as string;
   const id = context.params?.id as string;
 
   await ssg.recipe.getRecipeById.prefetch({ id });
 
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      id,
-    },
-  };
+  if (email) {
+    await ssg.user.getUserByEmail.prefetch({ email });
+    return {
+      props: {
+        trpcState: ssg.dehydrate(),
+        email,
+        id,
+      },
+    };
+  } else {
+    return {
+      props: {
+        trpcState: ssg.dehydrate(),
+        email: null,
+        id,
+      },
+    };
+  }
 };
