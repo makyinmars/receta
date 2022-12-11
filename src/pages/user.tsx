@@ -1,7 +1,9 @@
-import { ssrInit } from "@/utils/ssg";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
+
 import Menu from "src/components/menu";
 import { trpc } from "src/utils/trpc";
+import { ssrInit } from "src/utils/ssg";
 
 const User = ({
   email,
@@ -10,7 +12,13 @@ const User = ({
     email,
   });
 
-  return <Menu user={userData}>User</Menu>;
+  return (
+    <Menu user={userData}>
+      <Head>
+        <title>User</title>
+      </Head>
+    </Menu>
+  );
 };
 
 export default User;
@@ -37,7 +45,7 @@ export const getServerSideProps = async (
         email: null,
       },
       redirect: {
-        destinatin: "/",
+        destination: "/",
         permanent: false,
       },
     };

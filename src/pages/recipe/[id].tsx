@@ -23,17 +23,23 @@ const RecipeId = ({
     id,
   });
 
+  const { data: userRecipeIdsData } = trpc.user.getUserRecipeIds.useQuery({
+    userId,
+  });
+
   const createBookmark = trpc.bookmark.createBookmark.useMutation({
     onSuccess: async () => {
       await utils.user.getUserByEmail.invalidate({ email });
-      await utils.bookmark.getBookmarks.invalidate({ userId });
+      await utils.recipe.getRecipeById.invalidate({ id });
+      await utils.user.getUserRecipeIds.invalidate({ userId });
     },
   });
 
   const removeBookmark = trpc.bookmark.deleteBookmark.useMutation({
     onSuccess: async () => {
       await utils.user.getUserByEmail.invalidate({ email });
-      await utils.bookmark.getBookmarks.invalidate({ userId });
+      await utils.recipe.getRecipeById.invalidate({ id });
+      await utils.user.getUserRecipeIds.invalidate({ userId });
     },
   });
 
@@ -51,12 +57,10 @@ const RecipeId = ({
             <h2 className="custom-subtitle">Description</h2>
             {userData && (
               <>
-                {userData.bookmarks.find((bookmark) => {
-                  bookmark.recipeId === id;
-                }) ? (
-                  <BsBookmarks
+                {userRecipeIdsData && userRecipeIdsData.includes(id) ? (
+                  <BsFillBookmarksFill
                     className="h-8 w-8 hover:cursor-pointer"
-                    title="Remove this Bookmark"
+                    title="Remove From My Bookmarks"
                     onClick={async () => {
                       try {
                         await removeBookmark.mutateAsync({
@@ -66,9 +70,9 @@ const RecipeId = ({
                     }}
                   />
                 ) : (
-                  <BsFillBookmarksFill
+                  <BsBookmarks
                     className="h-8 w-8 hover:cursor-pointer"
-                    title="Bookmark this Recipe"
+                    title="Add To My Bookmarks"
                     onClick={async () => {
                       try {
                         await createBookmark.mutateAsync({
@@ -83,9 +87,11 @@ const RecipeId = ({
             )}
           </div>
           <hr className="border border-stone-700" />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-4">
-              <p className="custom-par">{data.description}</p>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="col-span-2 flex flex-col justify-between gap-4 sm:flex-row">
+              {data.description && (
+                <p className="custom-par">{data.description}</p>
+              )}
               <p className="custom-par">
                 <span className="font-semibold">County:</span> {data.country}
               </p>
@@ -97,20 +103,25 @@ const RecipeId = ({
                 <span className="font-semibold">Prep Time:</span>{" "}
                 {data.prepTimeMinutes}
               </p>
-              <p className="custom-par">
-                <span className="font-semibold">Video:</span>{" "}
-                {data.originalVideoUrl ? (
-                  <a href={data.originalVideoUrl}>{data.name}</a>
-                ) : (
-                  "No Video"
-                )}
-              </p>
             </div>
-            <img
-              src={data.thumbnailUrl}
-              alt={data.name}
-              className="h-96 w-[700px] self-center rounded"
-            />
+            <div className="flex flex-col items-center justify-around gap-2 md:flex-row">
+              <img
+                src={data.thumbnailUrl}
+                alt={data.name}
+                className="h-80 w-96 rounded"
+              />
+              {data.originalVideoUrl ? (
+                <video
+                  controls
+                  className="h-auto w-[540px] self-center rounded"
+                >
+                  <source src={data.originalVideoUrl} type="video/mp4" />
+                  <source src={data.originalVideoUrl} type="video/ogg" />
+                </video>
+              ) : (
+                "No Video"
+              )}
+            </div>
           </div>
 
           <h2 className="custom-subtitle">Instructions</h2>
@@ -127,7 +138,10 @@ const RecipeId = ({
           <h2 className="custom-subtitle">User Ratings</h2>
           <hr className="border border-stone-700" />
           {data.userRatings.map((rating, i) => (
-            <div key={i} className="flex justify-between gap-4">
+            <div
+              key={i}
+              className="flex flex-col justify-between gap-4 sm:flex-row"
+            >
               <p className="custom-par">
                 <span className="font-semibold">Positive Rating:</span>{" "}
                 {rating.countPositive}
@@ -138,7 +152,7 @@ const RecipeId = ({
               </p>
               <p className="custom-par">
                 <span className="font-semibold">Overall Rating:</span>{" "}
-                {rating.score}
+                {(rating.score * 100).toFixed(0)} %
               </p>
             </div>
           ))}
@@ -163,6 +177,8 @@ export const getServerSideProps = async (
   if (email) {
     const user = await ssg.user.getUserByEmail.fetch({ email });
     if (user) {
+      await ssg.user.getUserRecipeIds.prefetch({ userId: user.id });
+
       return {
         props: {
           trpcState: ssg.dehydrate(),

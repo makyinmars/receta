@@ -56,10 +56,7 @@ export const bookmarkRouter = router({
       });
 
       if (!recipesIds.length) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "No bookmarks found",
-        });
+        return [];
       } else {
         // Get the recipes from the ids
         const recipes = await ctx.prisma.recipe.findMany({

@@ -16,13 +16,6 @@ export const userRouter = router({
           where: {
             email,
           },
-          include: {
-            bookmarks: {
-              select: {
-                recipeId: true,
-              },
-            },
-          },
         });
       } else {
         throw new TRPCError({
@@ -43,5 +36,33 @@ export const userRouter = router({
           id,
         },
       });
+    }),
+  getUserRecipeIds: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string().nullable(),
+      })
+    )
+    .query(async ({ ctx, input: { userId } }) => {
+      if (!userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to access this resource",
+        });
+      }
+      const recipesIds = (await ctx.prisma.bookmark.findMany({
+        where: {
+          userId,
+        },
+        select: {
+          recipeId: true,
+        },
+      })) as { recipeId: string }[];
+
+      if (!recipesIds.length) {
+        return [];
+      } else {
+        return recipesIds.map((recipe) => recipe.recipeId);
+      }
     }),
 });

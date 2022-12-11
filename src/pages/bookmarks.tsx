@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { BsFillBookmarksFill } from "react-icons/bs";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -7,7 +8,6 @@ import { ssrInit } from "src/utils/ssg";
 import { trpc } from "src/utils/trpc";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
-import { BsBookmarks, BsFillBookmarksFill } from "react-icons/bs";
 
 const Bookmarks = ({
   email,
@@ -25,19 +25,17 @@ const Bookmarks = ({
     isError: bookmarksError,
   } = trpc.bookmark.getBookmarks.useQuery({ userId });
 
-  const createBookmark = trpc.bookmark.createBookmark.useMutation({
-    onSuccess: async () => {
-      await utils.user.getUserByEmail.invalidate({ email });
-      await utils.bookmark.getBookmarks.invalidate({ userId });
-    },
+  const { data: userRecipeIdsData } = trpc.user.getUserRecipeIds.useQuery({
+    userId,
   });
 
   const removeBookmark = trpc.bookmark.deleteBookmark.useMutation({
     onSuccess: async () => {
-      await utils.user.getUserByEmail.invalidate({ email });
       await utils.bookmark.getBookmarks.invalidate({ userId });
+      await utils.user.getUserRecipeIds.invalidate({ userId });
     },
   });
+
   return (
     <Menu user={userData}>
       {userData ? (
@@ -54,7 +52,7 @@ const Bookmarks = ({
           </h1>
           {bookmarksLoading && <Spinner text="Bookmarks Loading" />}
           {bookmarksError && <Error />}
-          {bookmarksData && (
+          {bookmarksData && bookmarksData.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
               {bookmarksData &&
                 bookmarksData.map((recipe, i) => (
@@ -81,39 +79,31 @@ const Bookmarks = ({
                           View Recipe
                         </button>
                         <>
-                          {userData.bookmarks.find(
-                            (bookmark) => bookmark.recipeId === recipe.id
-                          ) ? (
-                            <BsBookmarks
-                              className="h-8 w-8 hover:cursor-pointer"
-                              title="Remove this Bookmark"
-                              onClick={async () => {
-                                try {
-                                  await removeBookmark.mutateAsync({
-                                    recipeId: recipe.id,
-                                  });
-                                } catch {}
-                              }}
-                            />
-                          ) : (
-                            <BsFillBookmarksFill
-                              className="h-8 w-8 hover:cursor-pointer"
-                              title="Bookmark this Recipe"
-                              onClick={async () => {
-                                try {
-                                  await createBookmark.mutateAsync({
-                                    recipeId: recipe.id,
-                                    userId: userData.id,
-                                  });
-                                } catch {}
-                              }}
-                            />
-                          )}
+                          {userRecipeIdsData &&
+                            userRecipeIdsData.includes(recipe.id) && (
+                              <BsFillBookmarksFill
+                                className="h-8 w-8 hover:cursor-pointer"
+                                title="Remove this Bookmark"
+                                onClick={async () => {
+                                  try {
+                                    await removeBookmark.mutateAsync({
+                                      recipeId: recipe.id,
+                                    });
+                                  } catch {}
+                                }}
+                              />
+                            )}
                         </>
                       </div>
                     </div>
                   </div>
                 ))}
+            </div>
+          ) : (
+            <div className="self-center">
+              <p className="custom-par">
+                You do not have any bookmarks at the moment.
+              </p>
             </div>
           )}
         </div>
@@ -141,6 +131,7 @@ export const getServerSideProps = async (
     const user = await ssg.user.getUserByEmail.fetch({ email });
     if (user) {
       await ssg.bookmark.getBookmarks.prefetch({ userId: user.id });
+      await ssg.user.getUserRecipeIds.prefetch({ userId: user.id });
       return {
         props: {
           trpcState: ssg.dehydrate(),
