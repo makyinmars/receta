@@ -66,7 +66,7 @@ const RecipeId = ({
                         await removeBookmark.mutateAsync({
                           recipeId: id,
                         });
-                      } catch {}
+                      } catch { }
                     }}
                   />
                 ) : (
@@ -79,7 +79,7 @@ const RecipeId = ({
                           recipeId: id,
                           userId: userData.id,
                         });
-                      } catch {}
+                      } catch { }
                     }}
                   />
                 )}
@@ -88,10 +88,10 @@ const RecipeId = ({
           </div>
           <hr className="border border-stone-700" />
           <div className="grid grid-cols-1 gap-4">
+            {data.description && (
+              <p className="custom-par">{data.description}</p>
+            )}
             <div className="col-span-2 flex flex-col justify-between gap-4 sm:flex-row">
-              {data.description && (
-                <p className="custom-par">{data.description}</p>
-              )}
               <p className="custom-par">
                 <span className="font-semibold">County:</span> {data.country}
               </p>
@@ -113,7 +113,7 @@ const RecipeId = ({
               {data.originalVideoUrl ? (
                 <video
                   controls
-                  className="h-auto w-[540px] self-center rounded"
+                  className="h-80 w-96 self-center rounded"
                 >
                   <source src={data.originalVideoUrl} type="video/mp4" />
                   <source src={data.originalVideoUrl} type="video/ogg" />

@@ -22,7 +22,7 @@
   }
 
   .custom-subtitle {
-    @apply text-2xl font-bold;
+   @apply text-2xl font-bold;
   }
 
   .custom-par {

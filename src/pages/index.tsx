@@ -39,7 +39,7 @@ const Home = ({
         <main className="flex flex-col gap-10">
           <div className="flex flex-col gap-6">
             <h2 className="self-center text-4xl font-bold">Receta is Here!</h2>
-            <p className="rounded bg-violet-300 bg-opacity-50 p-2 text-2xl text-stone-700">
+            <p className="text-2xl text-stone-700">
               Welcome to our recipe site! We are dedicated to providing
               delicious and easy-to-follow recipes for everyone. Our site
               features a wide variety of dishes, from hearty main courses to
@@ -63,7 +63,7 @@ const Home = ({
                 <h1 className="text-center text-4xl font-bold">
                   Improve Your Skills with Receta
                 </h1>
-                <p className="rounded bg-violet-300 bg-opacity-50 p-2 text-center text-xl text-stone-600">
+                <p className="text-center text-2xl text-stone-600">
                   A great site that will help you improve your cooking skills
                   with great recipes.
                 </p>
@@ -118,9 +118,16 @@ const Home = ({
           <h2 className="text-center text-4xl font-bold">
             Bookmark Your Favorite Recipes
           </h2>
-          <div className="grid grid-cols-1 place-items-center content-center gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-4">
+            <div className="self-center">
+              <img
+                src="https://media2.giphy.com/media/l0MYyKbTCresSjrhK/giphy.gif?cid=ecf05e47m2f6n4ygqzk1odmxpej6lhnv5r6soz3o8onlr5fq&rid=giphy.gif&ct=g"
+                className="h-96 rounded"
+                alt="Images in rotation"
+              />
+            </div>
             <ul className="flex flex-col gap-4">
-              <li className="rounded bg-violet-300 bg-opacity-50 p-2 text-center text-2xl text-stone-700">
+              <li className="text-center text-2xl text-stone-700">
                 One of the standout features of our recipe site is the bookmark
                 function. This allows you to save any recipe that catches your
                 eye, so you can easily access it later. Whether you{`'`}re
@@ -128,7 +135,7 @@ const Home = ({
                 future reference, the bookmark function is a great way to keep
                 track of all your favorite dishes.
               </li>
-              <li className="rounded bg-violet-300 bg-opacity-50 p-2 text-center text-2xl text-stone-700">
+              <li className="text-center text-2xl text-stone-700">
                 To use the bookmark function, simply click the{" "}
                 <span className="font-semibold">
                   {`"`}Bookmark{`"`}
@@ -145,13 +152,6 @@ const Home = ({
                 bookmarking your favorite recipes today!
               </li>
             </ul>
-            <div>
-              <img
-                src="https://media2.giphy.com/media/l0MYyKbTCresSjrhK/giphy.gif?cid=ecf05e47m2f6n4ygqzk1odmxpej6lhnv5r6soz3o8onlr5fq&rid=giphy.gif&ct=g"
-                className="h-96 rounded"
-                alt="Images in rotation"
-              />
-            </div>
           </div>
         </main>
       </Menu>
