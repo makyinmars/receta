@@ -20,7 +20,7 @@ const Recipe = ({ data }: RecipeProps) => {
         data.map((recipe, i) => (
           <div
             key={i}
-            className="custom-border flex h-80 flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
+            className="custom-border flex h-full flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
           >
             <img
               src={recipe.thumbnailUrl}

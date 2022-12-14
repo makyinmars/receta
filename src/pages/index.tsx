@@ -78,7 +78,7 @@ const Home = ({
 
                     {userData ? (
                       <p
-                        className="custom-nav flex cursor-pointer items-center gap-2 rounded border-2 p-2 shadow-md"
+                        className="custom-nav flex cursor-pointer items-center gap-2 rounded border-2 p-2 shadow-lg"
                         onClick={() => router.push("/user")}
                       >
                         <img
@@ -106,7 +106,7 @@ const Home = ({
               </div>
               <img
                 src="/images/cook.jpeg"
-                className="h-80 w-96 self-center rounded"
+                className="h-80 w-96 self-center rounded shadow-lg"
                 alt="Cook Image"
               />
             </div>
@@ -122,7 +122,7 @@ const Home = ({
             <div className="self-center">
               <img
                 src="https://media2.giphy.com/media/l0MYyKbTCresSjrhK/giphy.gif?cid=ecf05e47m2f6n4ygqzk1odmxpej6lhnv5r6soz3o8onlr5fq&rid=giphy.gif&ct=g"
-                className="h-96 rounded"
+                className="h-96 rounded shadow-xl drop-shadow-xl"
                 alt="Images in rotation"
               />
             </div>

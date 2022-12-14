@@ -1,4 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { FcCheckmark } from "react-icons/fc";
+import toast, { Toaster } from "react-hot-toast";
 import { BsFillBookmarksFill } from "react-icons/bs";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -38,6 +40,9 @@ const Bookmarks = ({
 
   return (
     <Menu user={userData}>
+      <div>
+        <Toaster />
+      </div>
       {userData ? (
         <div className="flex flex-col gap-4">
           <Head>
@@ -58,7 +63,7 @@ const Bookmarks = ({
                 bookmarksData.map((recipe, i) => (
                   <div
                     key={i}
-                    className="custom-border flex h-80 flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
+                    className="custom-border flex h-full flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
                   >
                     <div className="flex flex-1">
                       <img
@@ -67,10 +72,15 @@ const Bookmarks = ({
                         className="h-40 w-60 self-center rounded md:h-80 md:w-80"
                       />
                     </div>
-                    <div>
+                    <div className="flex flex-col gap-4">
                       <h2 className="text-center text-lg font-bold">
                         {recipe.name}
                       </h2>
+                      <p className="w-full self-center text-stone-700">
+                        {recipe.description === ""
+                          ? "No description. We will add it soon. In the meantime, you can bookmark this recipe and come back later. Thank you for your patience."
+                          : recipe.description.substring(0, 110).concat("...")}
+                      </p>
                       <div className="flex items-center justify-center gap-4">
                         <button
                           className="custom-button"
@@ -81,17 +91,52 @@ const Bookmarks = ({
                         <>
                           {userRecipeIdsData &&
                             userRecipeIdsData.includes(recipe.id) && (
-                              <BsFillBookmarksFill
-                                className="h-8 w-8 hover:cursor-pointer"
-                                title="Remove this Bookmark"
-                                onClick={async () => {
-                                  try {
-                                    await removeBookmark.mutateAsync({
-                                      recipeId: recipe.id,
-                                    });
-                                  } catch {}
-                                }}
-                              />
+                              <div className="flex items-center gap-2">
+                                <BsFillBookmarksFill
+                                  className="h-8 w-8 hover:cursor-pointer"
+                                  title="Remove From My Bookmarks"
+                                  onClick={async () => {
+                                    try {
+                                      await toast.promise(
+                                        removeBookmark.mutateAsync({
+                                          recipeId: recipe.id,
+                                        }),
+                                        {
+                                          loading: (
+                                            <p>
+                                              Removing{" "}
+                                              <span className="font-bold">
+                                                {recipe.name}
+                                              </span>{" "}
+                                              from your Bookmarks...`
+                                            </p>
+                                          ),
+                                          success: (
+                                            <p>
+                                              <span className="font-bold">
+                                                {recipe.name}
+                                              </span>{" "}
+                                              removed.
+                                            </p>
+                                          ),
+                                          error: (
+                                            <p>
+                                              <span className="font-bold">
+                                                {recipe.name}
+                                              </span>{" "}
+                                              could not be removed
+                                            </p>
+                                          ),
+                                        }
+                                      );
+                                    } catch {}
+                                  }}
+                                />
+                                <FcCheckmark
+                                  className="h-10 w-10"
+                                  title="Recipe Saved!"
+                                />
+                              </div>
                             )}
                         </>
                       </div>
