@@ -10,7 +10,7 @@
 
 @layer components {
   .custom-border {
-    @apply border-2 border-gray-400 shadow-md;
+    @apply border-2 border-gray-400 shadow-lg;
   }
 
   .custom-button {

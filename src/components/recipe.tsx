@@ -27,19 +27,19 @@ const Recipe = ({ data }: RecipeProps) => {
               alt={recipe.name}
               className="h-40 w-60 self-center rounded md:h-80 md:w-80"
             />
-              <h2 className="text-center text-lg font-bold">{recipe.name}</h2>
-              <p className="self-center text-stone-700 w-full">
-                {recipe.description === ""
-                  ? "No description. We will add it soon. In the meantime, you can bookmark this recipe and come back later. Thank you for your patience."
-                  : recipe.description.substring(0, 110).concat("...")}
-              </p>
-              <div className="flex justify-center">
-                <button
-                  className="custom-button"
-                  onClick={() => router.push(`/recipe/${recipe.id}`)}
-                >
-                  View Recipe
-                </button>
+            <h2 className="text-center text-lg font-bold">{recipe.name}</h2>
+            <p className="w-full self-center text-stone-700">
+              {recipe.description === ""
+                ? "No description. We will add it soon. In the meantime, you can bookmark this recipe and come back later. Thank you for your patience."
+                : recipe.description.substring(0, 110).concat("...")}
+            </p>
+            <div className="flex justify-center">
+              <button
+                className="custom-button"
+                onClick={() => router.push(`/recipe/${recipe.id}`)}
+              >
+                View Recipe
+              </button>
             </div>
           </div>
         ))}
