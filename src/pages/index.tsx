@@ -90,7 +90,7 @@ const Home = ({
                       </p>
                     ) : (
                       <p
-                        className="custom-nav flex cursor-pointer items-center gap-2 rounded border-2 p-2 shadow-md"
+                        className="custom-nav flex cursor-pointer items-center gap-2 rounded border-2 border-stone-500 p-2 shadow-md"
                         title="Sign in with Discord"
                         onClick={() =>
                           signIn("discord", {
