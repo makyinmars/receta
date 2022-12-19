@@ -6,7 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { FaDiscord } from "react-icons/fa";
-import ReactPlayer from "react-player"
+import dynamic from "next/dynamic";
 
 import { trpc } from "src/utils/trpc";
 import Error from "src/components/error";
@@ -14,6 +14,10 @@ import Recipe from "src/components/recipe";
 import Spinner from "src/components/spinner";
 import { ssrInit } from "src/utils/ssg";
 import Menu from "src/components/menu";
+
+const DynamicPlayer = dynamic(() => import("src/components/dynamic-player"), {
+  ssr: false,
+});
 
 const Home = ({
   email,
@@ -153,16 +157,7 @@ const Home = ({
                 for easy reference in the kitchen. So why wait? Start
                 bookmarking your favorite recipes today!
               </div>
-              <div className="flex flex-col md:flex-row items-center justify-around gap-4">
-                <iframe
-                  className="h-80 w-[500px] self-center rounded"
-                  src="https://www.youtube.com/watch?v=AcpqpzsELUE"
-                />
-                <iframe
-                  className="h-80 w-[500px] self-center rounded"
-                  src="https://www.youtube.com/watch?v=7946ogTfAM4"
-                />
-              </div>
+              <DynamicPlayer />
             </div>
           </div>
         </main>

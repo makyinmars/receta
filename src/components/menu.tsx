@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { BsBookmarksFill } from "react-icons/bs";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaGithub } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 import { IoFastFoodOutline } from "react-icons/io5";
 import { signOut } from "next-auth/react";
@@ -117,6 +117,19 @@ const Menu = ({ children, user }: MenuProps) => {
       )}
 
       <div className="container mx-auto p-4">{children}</div>
+
+      <hr className="border border-stone-700" />
+      <footer className="flex justify-around">
+        <a
+          href="https://github.com/makyfj/receta.git"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <h3 className="custom-nav flex items-center gap-2">
+            Source Code <FaGithub className="text-stone-800" />
+          </h3>
+        </a>
+      </footer>
     </>
   );
 };
