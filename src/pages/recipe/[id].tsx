@@ -3,6 +3,7 @@ import Head from "next/head";
 import { Toaster, toast } from "react-hot-toast";
 import { BsFillBookmarksFill, BsBookmarks } from "react-icons/bs";
 import { FcCheckmark } from "react-icons/fc";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 import { ssrInit } from "src/utils/ssg";
 import { trpc } from "src/utils/trpc";
@@ -10,8 +11,15 @@ import { ingredients } from "src/data/ingredients";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
 import Menu from "src/components/menu";
-import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
+import { FaDiscord, FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+
+type CommentInput = {
+  recipeId: string;
+  userId: string;
+  text: string;
+};
 
 const RecipeId = ({
   id,
@@ -21,6 +29,14 @@ const RecipeId = ({
   const [userVoted, setUserVoted] = useState(false);
   const [positiveRating, setPositiveRating] = useState(false);
   const [negativeRating, setNegativeRating] = useState(false);
+
+  const { register, handleSubmit, reset } = useForm<CommentInput>({
+    defaultValues: {
+      recipeId: id,
+      userId: userId ?? "",
+      text: "",
+    },
+  });
 
   const utils = trpc.useContext();
 
@@ -36,6 +52,12 @@ const RecipeId = ({
     userId,
   });
 
+  const {
+    data: commentsData,
+    isLoading: commentsIsLoading,
+    isError: commentsIsError,
+  } = trpc.comment.getCommentsByRecipeId.useQuery(id);
+
   const createBookmark = trpc.bookmark.createBookmark.useMutation({
     onSuccess: async () => {
       await utils.user.getUserByEmail.invalidate({ email });
@@ -49,7 +71,19 @@ const RecipeId = ({
       await utils.user.getUserByEmail.invalidate({ email });
       await utils.recipe.getRecipeById.invalidate({ id });
       await utils.user.getUserRecipeIds.invalidate({ userId });
-      toast.success(<p className="text-lg">Thank you for your vote!</p>);
+    },
+  });
+
+  const createComment = trpc.comment.createComment.useMutation({
+    onSuccess: async () => {
+      await utils.comment.getCommentsByRecipeId.invalidate(id);
+      reset();
+    },
+  });
+
+  const deleteComment = trpc.comment.deleteComment.useMutation({
+    onSuccess: async () => {
+      await utils.comment.getCommentsByRecipeId.invalidate(id);
     },
   });
 
@@ -63,6 +97,33 @@ const RecipeId = ({
     setNegativeRating(true);
     setUserVoted(true);
     toast.success(<p className="text-lg">Thank you for your vote!</p>);
+  };
+
+  const onCreateComment: SubmitHandler<CommentInput> = async (data) => {
+    try {
+      await toast.promise(
+        createComment.mutateAsync({
+          recipeId: data.recipeId,
+          userId: data.userId,
+          text: data.text,
+        }),
+        {
+          loading: <p>Creating Comment...</p>,
+          success: <p>Comment Created!</p>,
+          error: <p>Comment Creation Failed!</p>,
+        }
+      );
+    } catch {}
+  };
+
+  const onDeleteComment = async (id: string) => {
+    try {
+      await toast.promise(deleteComment.mutateAsync({ id }), {
+        loading: <p>Deleting Comment...</p>,
+        success: <p>Comment Deleted!</p>,
+        error: <p>Comment Deletion Failed!</p>,
+      });
+    } catch {}
   };
 
   return (
@@ -281,6 +342,75 @@ const RecipeId = ({
           )}
         </div>
       )}
+
+      <div className="flex flex-col gap-4">
+        {commentsIsLoading && <Spinner text="Comments Loading..." />}
+        {commentsIsError && <Error />}
+        <h2 className="custom-subtitle">Comments</h2>
+        <hr className="border border-stone-700" />
+        {commentsData && commentsData.length > 0 ? (
+          commentsData.map((comment, i) => (
+            <div key={i} className="flex flex-col gap-2 rounded bg-red-300 p-1">
+              <p>
+                <span className="font-semibold">By User:</span>{" "}
+                {comment && comment.user?.name}
+              </p>
+              <p>
+                <span className="font-semibold">Create on: </span>{" "}
+                {new Date(comment.createdAt).toLocaleDateString()}
+              </p>
+
+              <p>{comment.text}</p>
+              {comment.userId === userId && (
+                <button
+                  className="custom-button mx-auto w-60"
+                  onClick={() => onDeleteComment(comment.id)}
+                >
+                  Delete My Comment
+                </button>
+              )}
+            </div>
+          ))
+        ) : (
+          <h2 className="text-center text-lg font-semibold">No Comments Yet</h2>
+        )}
+        {userId ? (
+          <form
+            onSubmit={handleSubmit(onCreateComment)}
+            className="flex flex-col justify-center gap-4"
+          >
+            <textarea
+              rows={4}
+              {...register("text")}
+              className="rounded border-2 border-stone-700 bg-red-300 focus:p-1 focus:outline-none"
+            />
+            <div className="flex justify-center">
+              <button type="submit" className="custom-button">
+                Add Comment
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex flex-col justify-center gap-2">
+            <h2 className="text-center text-lg font-semibold">
+              You Must Be Logged In To Comment
+            </h2>
+
+            <p
+              className="custom-nav mx-auto flex w-40 cursor-pointer items-center gap-2 rounded border-2 border-stone-500 p-2 shadow-md"
+              title="Sign in with Discord"
+              onClick={() =>
+                signIn("discord", {
+                  callbackUrl: `/user`,
+                })
+              }
+            >
+              Sign In
+              <FaDiscord className="h-8 w-8 text-purple-600" />
+            </p>
+          </div>
+        )}
+      </div>
     </Menu>
   );
 };
@@ -296,6 +426,8 @@ export const getServerSideProps = async (
   const id = context.params?.id as string;
 
   await ssg.recipe.getRecipeById.prefetch({ id });
+
+  await ssg.comment.getCommentsByRecipeId.prefetch(id);
 
   if (email) {
     const user = await ssg.user.getUserByEmail.fetch({ email });
