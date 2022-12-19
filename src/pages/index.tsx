@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { FaDiscord } from "react-icons/fa";
+import ReactPlayer from "react-player"
 
 import { trpc } from "src/utils/trpc";
 import Error from "src/components/error";
@@ -63,9 +64,9 @@ const Home = ({
                 <h1 className="text-center text-4xl font-bold">
                   Improve Your Skills with Receta
                 </h1>
-                <p className="text-center text-2xl text-stone-600">
+                <p className="max-w-xl text-center text-2xl text-stone-600">
                   A great site that will help you improve your cooking skills
-                  with great recipes.
+                  with great recipes. Sign In to bookmark your favorite recipes!
                 </p>
                 <div>
                   <div className="flex justify-center gap-4">
@@ -127,16 +128,16 @@ const Home = ({
                 alt="Images in rotation"
               />
             </div>
-            <ul className="flex flex-col gap-4">
-              <li className="text-center text-2xl text-stone-700">
+            <div className="flex flex-col gap-4">
+              <div className="text-center text-2xl text-stone-700">
                 One of the standout features of our recipe site is the bookmark
                 function. This allows you to save any recipe that catches your
                 eye, so you can easily access it later. Whether you{`'`}re
                 planning a special dinner or just want to save a recipe for
                 future reference, the bookmark function is a great way to keep
                 track of all your favorite dishes.
-              </li>
-              <li className="text-center text-2xl text-stone-700">
+              </div>
+              <div className="text-center text-2xl text-stone-700">
                 To use the bookmark function, simply click the{" "}
                 <span className="font-semibold">
                   {`"`}Bookmark{`"`}
@@ -151,8 +152,18 @@ const Home = ({
                 recipes, organize them into categories, and even print them out
                 for easy reference in the kitchen. So why wait? Start
                 bookmarking your favorite recipes today!
-              </li>
-            </ul>
+              </div>
+              <div className="flex flex-col md:flex-row items-center justify-around gap-4">
+                <iframe
+                  className="h-80 w-[500px] self-center rounded"
+                  src="https://www.youtube.com/watch?v=AcpqpzsELUE"
+                />
+                <iframe
+                  className="h-80 w-[500px] self-center rounded"
+                  src="https://www.youtube.com/watch?v=7946ogTfAM4"
+                />
+              </div>
+            </div>
           </div>
         </main>
       </Menu>

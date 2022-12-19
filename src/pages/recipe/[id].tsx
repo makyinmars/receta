@@ -63,6 +63,7 @@ const RecipeId = ({
       await utils.user.getUserByEmail.invalidate({ email });
       await utils.recipe.getRecipeById.invalidate({ id });
       await utils.user.getUserRecipeIds.invalidate({ userId });
+      await utils.bookmark.getBookmarks.invalidate({ userId });
     },
   });
 
@@ -71,6 +72,7 @@ const RecipeId = ({
       await utils.user.getUserByEmail.invalidate({ email });
       await utils.recipe.getRecipeById.invalidate({ id });
       await utils.user.getUserRecipeIds.invalidate({ userId });
+      await utils.bookmark.getBookmarks.invalidate({ userId });
     },
   });
 
