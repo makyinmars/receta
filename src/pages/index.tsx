@@ -52,8 +52,7 @@ const Home = ({
               you will be able to find something to cook up that will impress
               your friends and family. Our recipe collection is constantly
               growing, so be sure to check back often to see what{`'`}s new. You
-              can also sign up for our newsletter to receive updates and special
-              offers. Happy cooking!
+              can also sign up to bookmarks your favorite recipes. Happy cooking!
             </p>
             <div className="flex justify-center">
               <button
