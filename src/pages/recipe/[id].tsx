@@ -232,7 +232,7 @@ const RecipeId = ({
             </p>
             <div className="col-span-2 flex flex-col justify-between gap-4 sm:flex-row">
               <p className="custom-par">
-                <span className="font-semibold">County:</span> {data.country}
+                <span className="font-semibold">Country:</span> {data.country}
               </p>
               <p className="custom-par">
                 <span className="font-semibold">Cook Time:</span>{" "}
