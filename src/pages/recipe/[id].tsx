@@ -228,7 +228,7 @@ const RecipeId = ({
             <p className="w-full self-center text-lg text-stone-700">
               {data.description === ""
                 ? "No description. We will add it soon. In the meantime, you can bookmark this recipe and come back later. Thank you for your patience."
-                : data.description.substring(0, 110).concat("...")}
+                : data.description}
             </p>
             <div className="col-span-2 flex flex-col justify-between gap-4 sm:flex-row">
               <p className="custom-par">
