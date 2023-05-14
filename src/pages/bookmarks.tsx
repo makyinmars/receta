@@ -10,6 +10,15 @@ import { ssrInit } from "src/utils/ssg";
 import { trpc } from "src/utils/trpc";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const Bookmarks = ({
   email,
@@ -51,102 +60,96 @@ const Bookmarks = ({
               {`'`}s Bookmarks
             </title>
           </Head>
-          <h1 className="text-center text-3xl font-bold">
+          <h2 className="custom-h2 text-center">
             {userData.name}
             {`'`}s Bookmarks
-          </h1>
+          </h2>
           {bookmarksLoading && <Spinner text="Bookmarks Loading" />}
           {bookmarksError && <Error />}
           {bookmarksData && bookmarksData.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {bookmarksData &&
                 bookmarksData.map((recipe, i) => (
-                  <div
-                    key={i}
-                    className="custom-border flex h-full flex-col items-center justify-between gap-4 rounded bg-white bg-opacity-40 p-4 md:h-auto"
-                  >
-                    <div className="flex flex-1">
-                      <img
-                        src={recipe.thumbnailUrl}
-                        alt={recipe.name}
-                        className="h-40 w-60 self-center rounded md:h-80 md:w-80"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      <h2 className="text-center text-lg font-bold">
-                        {recipe.name}
-                      </h2>
-                      <p className="w-full self-center text-stone-700">
+                  <Card key={i} className="flex flex-col justify-between">
+                    <CardHeader>
+                      <CardTitle>{recipe.name}</CardTitle>
+                      <CardDescription>
                         {recipe.description === ""
                           ? "No description. We will add it soon. In the meantime, you can bookmark this recipe and come back later. Thank you for your patience."
                           : recipe.description.substring(0, 110).concat("...")}
-                      </p>
-                      <div className="flex items-center justify-center gap-4">
-                        <button
-                          className="custom-button"
-                          onClick={() => router.push(`/recipe/${recipe.id}`)}
-                        >
-                          View Recipe
-                        </button>
-                        <>
-                          {userRecipeIdsData &&
-                            userRecipeIdsData.includes(recipe.id) && (
-                              <div className="flex items-center gap-2">
-                                <BsFillBookmarksFill
-                                  className="h-8 w-8 hover:cursor-pointer"
-                                  title="Remove From My Bookmarks"
-                                  onClick={async () => {
-                                    try {
-                                      await toast.promise(
-                                        removeBookmark.mutateAsync({
-                                          recipeId: recipe.id,
-                                        }),
-                                        {
-                                          loading: (
-                                            <p>
-                                              Removing{" "}
-                                              <span className="font-bold">
-                                                {recipe.name}
-                                              </span>{" "}
-                                              from your Bookmarks...`
-                                            </p>
-                                          ),
-                                          success: (
-                                            <p>
-                                              <span className="font-bold">
-                                                {recipe.name}
-                                              </span>{" "}
-                                              removed.
-                                            </p>
-                                          ),
-                                          error: (
-                                            <p>
-                                              <span className="font-bold">
-                                                {recipe.name}
-                                              </span>{" "}
-                                              could not be removed
-                                            </p>
-                                          ),
-                                        }
-                                      );
-                                    } catch {}
-                                  }}
-                                />
-                                <FcCheckmark
-                                  className="h-10 w-10"
-                                  title="Recipe Saved!"
-                                />
-                              </div>
-                            )}
-                        </>
-                      </div>
-                    </div>
-                  </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <img
+                        src={recipe.thumbnailUrl}
+                        alt={recipe.name}
+                        className="mx-auto h-40 w-60 self-center rounded md:h-80 md:w-80"
+                      />
+                    </CardContent>
+                    <CardFooter className="flex items-center justify-center gap-4">
+                      <Button
+                        onClick={() => router.push(`/recipe/${recipe.id}`)}
+                      >
+                        View Recipe
+                      </Button>
+                      <>
+                        {userRecipeIdsData &&
+                          userRecipeIdsData.includes(recipe.id) && (
+                            <div className="flex items-center gap-2">
+                              <BsFillBookmarksFill
+                                className="h-8 w-8 hover:cursor-pointer"
+                                title="Remove From My Bookmarks"
+                                onClick={async () => {
+                                  try {
+                                    await toast.promise(
+                                      removeBookmark.mutateAsync({
+                                        recipeId: recipe.id,
+                                      }),
+                                      {
+                                        loading: (
+                                          <p>
+                                            Removing{" "}
+                                            <span className="font-bold">
+                                              {recipe.name}
+                                            </span>{" "}
+                                            from your Bookmarks...`
+                                          </p>
+                                        ),
+                                        success: (
+                                          <p>
+                                            <span className="font-bold">
+                                              {recipe.name}
+                                            </span>{" "}
+                                            removed.
+                                          </p>
+                                        ),
+                                        error: (
+                                          <p>
+                                            <span className="font-bold">
+                                              {recipe.name}
+                                            </span>{" "}
+                                            could not be removed
+                                          </p>
+                                        ),
+                                      }
+                                    );
+                                  } catch {}
+                                }}
+                              />
+                              <FcCheckmark
+                                className="h-10 w-10"
+                                title="Recipe Saved!"
+                              />
+                            </div>
+                          )}
+                      </>
+                    </CardFooter>
+                  </Card>
                 ))}
             </div>
           ) : (
             <div className="self-center">
-              <p className="custom-par">
+              <p className="custom-p">
                 You do not have any bookmarks at the moment.
               </p>
             </div>

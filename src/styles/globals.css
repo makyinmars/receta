@@ -1,31 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-gradient-to-l from-red-100 via-white to-red-200 text-stone-700;
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --beneficial: 120 100% 33%;
+    --beneficial-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 6%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --card: 224 71% 6%;
+    --card-foreground: 213.2 31.4% 91%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --beneficial: 120 100% 20%;
+    --beneficial-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
   }
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
 @layer components {
-  .custom-border {
-    @apply border-2 border-gray-400 shadow-lg;
+  .custom-h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
   }
 
-  .custom-button {
-    @apply rounded border-2 border-gray-400 bg-gray-100 p-2 font-semibold text-stone-700 shadow-lg hover:bg-gray-200;
+  .custom-h2 {
+    @apply scroll-m-20 border-b border-b-slate-200 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 dark:border-b-slate-700;
   }
 
-  .custom-nav {
-    @apply bg-gradient-to-r from-rose-700 to-stone-600 bg-clip-text text-3xl font-bold text-transparent hover:from-violet-900 hover:to-stone-700;
+  .custom-h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
   }
 
-  .custom-subtitle {
-   @apply text-2xl font-bold;
+  .custom-h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
   }
 
-  .custom-par {
-    @apply text-lg;
+  .custom-h5 {
+    @apply scroll-m-20 text-lg font-semibold tracking-tight;
+  }
+
+  .custom-p {
+    @apply leading-7 [&:not(:first-child)]:mt-3;
+  }
+
+  .custom-large {
+    @apply text-lg font-semibold;
+  }
+
+  .custom-small {
+    @apply text-sm font-medium leading-none;
+  }
+
+  .custom-subtle {
+    @apply text-sm font-medium;
   }
 }

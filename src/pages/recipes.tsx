@@ -8,6 +8,7 @@ import Menu from "src/components/menu";
 import Spinner from "src/components/spinner";
 import Recipe from "src/components/recipe";
 import Error from "src/components/error";
+import { Input } from "@/components/ui/input";
 
 const Recipes = ({
   email,
@@ -38,11 +39,10 @@ const Recipes = ({
         <Head>
           <title>Recipes</title>
         </Head>
-        <h1 className="text-center text-3xl font-bold">Recipes</h1>
+        <h2 className="custom-h2 text-center">Recipes</h2>
         <div className="flex justify-center gap-2 pb-4">
-          <input
+          <Input
             type="text"
-            className="custom-border rounded bg-white bg-opacity-40 p-2 outline-none"
             placeholder="Type to find a recipe"
             onChange={(e) => setSearch(e.target.value)}
             value={search}

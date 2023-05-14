@@ -1,11 +1,11 @@
 // src/pages/_app.tsx
-import "../styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import type { AppType } from "next/app";
+import { ThemeProvider } from "next-themes";
 
 import { trpc } from "../utils/trpc";
-import Layout from "src/components/layout";
+import "src/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -13,9 +13,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Layout>
+      <ThemeProvider attribute="class">
         <Component {...pageProps} />
-      </Layout>
+      </ThemeProvider>
     </SessionProvider>
   );
 };

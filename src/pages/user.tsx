@@ -8,6 +8,13 @@ import { ssrInit } from "src/utils/ssg";
 import Spinner from "src/components/spinner";
 import Error from "src/components/error";
 import toast, { Toaster } from "react-hot-toast";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const User = ({
   email,
@@ -46,28 +53,30 @@ const User = ({
       <div>
         <Toaster />
       </div>
-      {isLoading && <Spinner text="User Information Loading..." />}
-      {isError && <Error />}
       {userData && (
         <div className="flex flex-col gap-4">
-          <h2 className="text-center text-3xl font-bold">
+          <h2 className="custom-h2 text-center">
             {userData.name}
-            {`'`}s Profile
+            {`'`}s Profile{" "}
           </h2>
-          <div className="mx-auto flex w-96 flex-col items-center rounded bg-black bg-opacity-25 p-2">
-            <p className="custom-par font-bold">Email:</p>
-            <p className="text-lg">{userData.email}</p>
-            <p className="custom-par font-bold">Name:</p>
-            <p className="text-lg">{userData.name}</p>
-            <button
-              className="custom-button"
-              onClick={() => onDeleteUser(userData.id)}
-            >
-              Delete Account
-            </button>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardDescription>
+                Here you can see your user information and delete your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-4">
+              <p className="custom-p">{userData.email}</p>
+              <p className="custom-p">{userData.name}</p>
+              <Button onClick={() => onDeleteUser(userData.id)}>
+                Delete Account
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       )}
+      {isLoading && <Spinner text="User Information Loading..." />}
+      {isError && <Error />}
     </Menu>
   );
 };
